@@ -1,4 +1,4 @@
-﻿name: Build LDweixin
+name: Build LDweixin
 
 on:
   push:
@@ -19,9 +19,17 @@ jobs:
       - name: Build
         run: go build -tags "no_web" -o LDweixin.exe ./cmd/cc-connect/
 
+      - name: Upload EXE as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: LDweixin
+          path: LDweixin.exe
+
       - name: Upload Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           files: LDweixin.exe
+          fail_on_unmatched: false
+          make_latest: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Save, Loader2, Copy, Check, Copy, Check } from 'lucide-react';
+import { Save, Loader2, Copy, Check } from 'lucide-react';
 import { Card, Button, Input } from '@/components/ui';
 import { getGlobalSettings, updateGlobalSettings, type GlobalSettings as GS } from '@/api/settings';
 import { cn } from '@/lib/utils';
@@ -66,6 +66,9 @@ function NumberInput({ value, onChange, label, hint, min, max }: { value: number
 }
 
 export default function GlobalSettings() {
+  const [allowDirectIPAccess, setAllowDirectIPAccess] = useState(false);
+  const [publicIP, setPublicIP] = useState('');
+  const [copied, setCopied] = useState(false);
   const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);

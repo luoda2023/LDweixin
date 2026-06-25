@@ -223,10 +223,10 @@ type StreamPreviewConfig struct {
 
 // InstantReplyConfig controls the immediate confirmation reply sent when a message
 // is received, before the agent starts processing. This gives users quick feedback
-// that their message was received (e.g. "ð    Thinking...").
+// that their message was received (e.g. "- Thinking...").
 type InstantReplyConfig struct {
 	Enabled *bool  `toml:"enabled"` // default false
-	Content string `toml:"content"` // custom reply text; empty = use i18n default ("--Processing...")
+	Content string `toml:"content"` // custom reply text; empty = use i18n default ("-Processing...")
 }
 
 // RateLimitConfig controls per-session message rate limiting.
@@ -297,7 +297,7 @@ type SpeechConfig struct {
 type TTSConfig struct {
 	Enabled      bool                      `toml:"enabled"`
 	Provider     string                    `toml:"provider"`      // "qwen" | "openai" | "minimax" | "mimo" | "espeak" | "pico" | "edge"
-	Voice        string                    `toml:"voice"`         // default voice name (for edge: "zh-CN-XiaoxiaoNeural"; for pico: "zh-CN"; for espeak: "zh"; for mimo: "mimo_default" / "----" / "Mia" --
+	Voice        string                    `toml:"voice"`         // default voice name (for edge: "zh-CN-XiaoxiaoNeural"; for pico: "zh-CN"; for espeak: "zh"; for mimo: "mimo_default" / "--" / "Mia" -
 	VoiceID      string                    `toml:"voice_id"`      // alias for voice; useful for MiniMax voice IDs
 	Speed        float64                   `toml:"speed"`         // optional speaking speed multiplier; 0 = provider default
 	LanguageType string                    `toml:"language_type"` // optional provider-specific language hint
@@ -504,13 +504,13 @@ type ProjectConfig struct {
 	// RunAsEnv optionally extends the minimal environment variable allowlist
 	// that crosses the sudo boundary when RunAsUser is set. The default
 	// allowlist (LANG, LC_*, TERM) is always included; PATH is NOT preserved
-	// by default --the target user's login PATH is used. Dangerous variables
+	// by default -the target user's login PATH is used. Dangerous variables
 	// (LD_PRELOAD, PATH, HOME, etc.) are rejected at config validation.
 	// Use this only for variables the target user cannot set in their profile.
 	RunAsEnv []string `toml:"run_as_env,omitempty"`
 	// ShowContextIndicator: nil/true = render the reply footer's first line
-	// (model Â  effort Â  token usage Â  context %); false = hide that line.
-	// Subordinate to ReplyFooter --the master footer toggle.
+	// (model -  effort -  token usage -  context %); false = hide that line.
+	// Subordinate to ReplyFooter -the master footer toggle.
 	ShowContextIndicator *bool `toml:"show_context_indicator,omitempty"`
 	// ShowWorkdirIndicator: nil/true = render the reply footer's second line
 	// (workspace directory); false = hide that line. Subordinate to ReplyFooter.
@@ -601,9 +601,9 @@ type PlatformConfig struct {
 	Options map[string]any `toml:"options"`
 }
 
-// AliasConfig maps a trigger string to a command (e.g. "----" --"/help").
+// AliasConfig maps a trigger string to a command (e.g. "--" -"/help").
 type AliasConfig struct {
-	Name    string `toml:"name"`    // trigger text (e.g. "----")
+	Name    string `toml:"name"`    // trigger text (e.g. "--")
 	Command string `toml:"command"` // target command (e.g. "/help")
 }
 
@@ -621,7 +621,7 @@ type LogConfig struct {
 }
 
 // load parses, env-resolves, and wires providers in the config file but does
-// NOT validate --callers must call validate() or validatePermissive() themselves.
+// NOT validate -callers must call validate() or validatePermissive() themselves.
 func load(path string) (*Config, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
@@ -817,13 +817,13 @@ func projectQuietEffective(cfg *Config, proj *ProjectConfig) bool {
 // Resolution order for mode (thinking/tool visibility):
 //  1. Explicit [projects.display].mode wins.
 //  2. Explicit [display].mode wins.
-//  3. Legacy quiet = true (without display.mode) --"quiet".
-//  4. Default --"full".
+//  3. Legacy quiet = true (without display.mode) -"quiet".
+//  4. Default -"full".
 //
 // Resolution order for thinking_messages / tool_messages:
 //  1. project-level [projects.display].<field> (highest precedence)
 //  2. global [display].<field>
-//  3. mode-derived default (compact/quiet --false, full --true)
+//  3. mode-derived default (compact/quiet -false, full -true)
 func EffectiveDisplay(cfg *Config, proj *ProjectConfig) (mode string, thinkingMessages, toolMessages bool, thinkingMaxLen, toolMaxLen int, showContextIndicator, replyFooter bool) {
 	var projDisp *DisplayConfig
 	if proj != nil {
@@ -1163,7 +1163,7 @@ func validateUsersConfig(prefix string, u *UsersConfig) error {
 		return fmt.Errorf("config: %s.users has no roles defined", prefix)
 	}
 	wildcardCount := 0
-	seenUserIDs := make(map[string]string) // userID --role name
+	seenUserIDs := make(map[string]string) // userID -role name
 	for roleName, rc := range u.Roles {
 		if len(rc.UserIDs) == 0 {
 			return fmt.Errorf("config: %s.users.roles.%s has empty user_ids", prefix, roleName)
@@ -1443,7 +1443,7 @@ func containsString(ss []string, s string) bool {
 	return false
 }
 
-// ---- Global provider CRUD ------------------------------------------------------------------------------
+// -- Global provider CRUD ---------------------------------------
 
 // ListGlobalProviders returns the top-level [[providers]] list.
 func ListGlobalProviders() ([]ProviderConfig, error) {
@@ -2253,7 +2253,7 @@ type WeixinCredentialUpdateOptions struct {
 	Token             string
 	BaseURL           string // optional; empty = do not change in TOML
 	CDNBaseURL        string // optional; empty = do not change
-	AccountID         string // optional ilink_bot_id --options.account_id
+	AccountID         string // optional ilink_bot_id -options.account_id
 	ScannedUserID     string // optional ilink_user_id for allow_from merge when SetAllowFromEmpty
 	SetAllowFromEmpty bool
 }

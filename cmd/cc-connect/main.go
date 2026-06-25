@@ -73,7 +73,7 @@ const (
 // priority order: explicit flag value > CC_LOG_MAX_SIZE env var > built-in
 // default. flagValue is the raw string from --log-max-size ("" if not set).
 // Returns the byte count and which source won. Invalid flag/env values are
-// logged to stderr and the value is ignored â€?a malformed setting must never
+// logged to stderr and the value is ignored -?a malformed setting must never
 // silently downgrade to "0 bytes" or another surprise.
 func resolveLogMaxSize(flagValue string) (int64, logSizeSource) {
 	if strings.TrimSpace(flagValue) != "" {
@@ -176,7 +176,7 @@ func preScanLogMaxBackupsFlag(args []string) string {
 // intentionally uses the same MiB unit as the config field so the two knobs
 // cannot silently disagree by a factor of 1<<20. A malformed or non-positive
 // env value is ignored (falling through to config/default) rather than being
-// fatal â€?the same lenient posture as resolveLogMaxSize, which also warns so
+// fatal -?the same lenient posture as resolveLogMaxSize, which also warns so
 // a typo never silently downgrades the setting.
 func resolveMaxAttachmentSize(cfg *config.Config) int64 {
 	if v := strings.TrimSpace(os.Getenv("CC_MAX_ATTACHMENT_SIZE_MB")); v != "" {
@@ -361,7 +361,7 @@ func main() {
 
 	// run_as_user preflight + isolation audit. MUST run before any engine
 	// or agent is constructed. If any project fails, abort startup
-	// entirely â€?never half-spawn. See core/runas_check.go and
+	// entirely -?never half-spawn. See core/runas_check.go and
 	// core/runas_audit.go for the checks themselves.
 	if err := runRunAsUserStartupChecks(context.Background(), cfg); err != nil {
 		slog.Error("run_as_user: startup checks failed, refusing to start", "error", err)
@@ -562,7 +562,7 @@ func main() {
 			engine.SetUserRoles(buildUserRoleManager(proj.Users))
 		}
 
-		// Wire display truncation settings (includes legacy quiet â†?display mapping)
+		// Wire display truncation settings (includes legacy quiet -?display mapping)
 		{
 			mode, tm, tool, tmlen, toollen, _, _ := config.EffectiveDisplay(cfg, &proj)
 			historyMaxLen := config.EffectiveHistoryMaxLen(cfg, &proj)
@@ -719,7 +719,7 @@ func main() {
 		resetIdle, defaulted := resolveResetOnIdle(proj.ResetOnIdleMins)
 		engine.SetResetOnIdle(resetIdle)
 		if defaulted {
-			slog.Info("project: reset_on_idle_mins not set, applying default â€?set reset_on_idle_mins = 0 to opt out, see docs/usage.md",
+			slog.Info("project: reset_on_idle_mins not set, applying default -?set reset_on_idle_mins = 0 to opt out, see docs/usage.md",
 				"project", proj.Name, "default_minutes", defaultResetOnIdleMins)
 		}
 
@@ -1491,7 +1491,7 @@ func resolveClaudeProjectDir(workDir string) string {
 }
 
 // resolveConfigPath determines which config file to use.
-// Priority: explicit flag â†?./config.toml â†?~/.cc-connect/config.toml
+// Priority: explicit flag -?./config.toml -?~/.cc-connect/config.toml
 func resolveConfigPath(explicit string) string {
 	if explicit != "" {
 		return explicit
@@ -1692,7 +1692,7 @@ func reloadConfig(configPath, projName string, engine *core.Engine) (*core.Confi
 		return nil, fmt.Errorf("project %q not found in config", projName)
 	}
 
-	// Reload display config (includes legacy quiet â†?display mapping)
+	// Reload display config (includes legacy quiet -?display mapping)
 	mode, tm, tool, tmlen, toollen, showCtx, showFooter := config.EffectiveDisplay(cfg, proj)
 	historyMaxLen := config.EffectiveHistoryMaxLen(cfg, proj)
 	engine.SetDisplayConfig(core.DisplayCfg{
@@ -1732,7 +1732,7 @@ func reloadConfig(configPath, projName string, engine *core.Engine) (*core.Confi
 	resetIdle, defaulted := resolveResetOnIdle(proj.ResetOnIdleMins)
 	engine.SetResetOnIdle(resetIdle)
 	if defaulted {
-		slog.Info("project: reset_on_idle_mins not set, applying default â€?set reset_on_idle_mins = 0 to opt out, see docs/usage.md",
+		slog.Info("project: reset_on_idle_mins not set, applying default -?set reset_on_idle_mins = 0 to opt out, see docs/usage.md",
 			"project", proj.Name, "default_minutes", defaultResetOnIdleMins)
 	}
 

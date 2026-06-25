@@ -515,6 +515,11 @@ func (p *Platform) dispatchInbound(ctx context.Context, m *weixinMessage, h core
 		msgID = randomHex(8)
 	}
 
+	// Slash command - show help
+	if strings.TrimSpace(body) == "/" {
+		body = "/help"
+	}
+
 	// Voice command processing
 	if strings.TrimSpace(body) != "" {
 		cmd := tryParseVoiceCommand(body)
@@ -727,20 +732,26 @@ func (p *Platform) sendChunks(ctx context.Context, replyCtx any, content string)
 
 // stripMarkdown removes markdown formatting for clean WeChat display
 func stripMarkdown(s string) string {
-    s = strings.ReplaceAll(s, "**", "")
-    s = strings.ReplaceAll(s, "*", "")
-    s = strings.ReplaceAll(s, "", "")
-    s = strings.ReplaceAll(s, "`", "")
-    lines := strings.Split(s, "\n")
-    for i, line := range lines {
-        trimmed := strings.TrimSpace(line)
-        if strings.HasPrefix(trimmed, "### ") || strings.HasPrefix(trimmed, "## ") || strings.HasPrefix(trimmed, "# ") {
-            lines[i] = strings.TrimLeft(trimmed, "# ")
-        }
-    }
-    s = strings.Join(lines, "\n")
-    s = strings.ReplaceAll(s, "\n\n\n", "\n\n")
-    return strings.TrimSpace(s)
+	s = strings.ReplaceAll(s, "**", "")
+	s = strings.ReplaceAll(s, "*", "")
+	s = strings.ReplaceAll(s, "`", "")
+	s = strings.ReplaceAll(s, "\u25fb", "")
+	s = strings.ReplaceAll(s, "\u25b6", "")
+	s = strings.ReplaceAll(s, "\u25b8", "")
+	s = strings.ReplaceAll(s, "\u25a0", "")
+	lines := strings.Split(s, "\n")
+	var clean []string
+	for _, line := range lines {
+		trimmed := strings.TrimSpace(line)
+		if trimmed == "" { continue }
+		if trimmed == "---" { continue }
+		if strings.HasPrefix(trimmed, "### ") { trimmed = strings.TrimLeft(trimmed, "# ") }
+		if strings.HasPrefix(trimmed, "## ") { trimmed = strings.TrimLeft(trimmed, "# ") }
+		if strings.HasPrefix(trimmed, "# ") { trimmed = strings.TrimLeft(trimmed, "# ") }
+		clean = append(clean, trimmed)
+	}
+	s = strings.Join(clean, "\n")
+	return strings.TrimSpace(s)
 }
 func (p *Platform) sendChunkWithRetry(ctx context.Context, rc *replyContext, chunk string, chunkIdx, totalChunks int) error {
 	var lastErr error

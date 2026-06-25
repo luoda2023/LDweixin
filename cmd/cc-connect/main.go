@@ -25,7 +25,7 @@ import (
 )
 
 var (
-	version   = "4.0.1"
+	version   = "1.0.4"
 	commit    = "none"
 	buildTime = "unknown"
 )
@@ -304,11 +304,11 @@ func main() {
 	}
 
 	if *showVersion {
-		fmt.Printf("cc-connect %s\ncommit:  %s\nbuilt:   %s\n", version, commit, buildTime)
+		fmt.Printf("LDweixin %s\ncommit:  %s\nbuilt:   %s\n", version, commit, buildTime)
 		return
 	}
 
-	core.VersionInfo = fmt.Sprintf("cc-connect %s\ncommit: %s\nbuilt: %s", version, commit, buildTime)
+	core.VersionInfo = fmt.Sprintf("LDweixin %s\ncommit: %s\nbuilt: %s", version, commit, buildTime)
 	core.CurrentVersion = version
 	core.CurrentCommit = commit
 	core.CurrentBuildTime = buildTime
@@ -1309,7 +1309,7 @@ func main() {
 		apiSrv.Start()
 	}
 
-	slog.Info("cc-connect is running", "projects", len(engines))
+	slog.Info("LDweixin is running", "projects", len(engines))
 
 	// After startup, check if we were restarted and queue the success
 	// notification. The engine dispatches it on the first OnPlatformReady
@@ -1510,7 +1510,7 @@ func bootstrapConfig(path string) error {
 		return err
 	}
 
-	const tmpl = `# cc-connect configuration
+	const tmpl = `# LDweixin configuration
 # Docs: https://github.com/luoda2023/LDweixin
 
 [log]
@@ -1577,7 +1577,7 @@ Flags:
   --help             Show this help message
 
 Commands:
-  daemon             Manage cc-connect as a background service (systemd/launchd/schtasks)
+  daemon             Manage LDweixin as a background service (systemd/launchd/schtasks)
     install          Install and start the daemon service
     uninstall        Remove the daemon service
     start            Start the daemon
@@ -1630,10 +1630,10 @@ Commands:
   config-example     (deprecated: use 'config example' instead)
 
 Examples:
-  cc-connect                          Start with default config
-  cc-connect --config /path/to.toml   Start with a specific config file
-  cc-connect daemon install           Install as a system service
-  cc-connect daemon logs -f           Follow daemon logs
+  LDweixin                          Start with default config
+  LDweixin --config /path/to.toml   Start with a specific config file
+  LDweixin daemon install           Install as a system service
+  LDweixin daemon logs -f           Follow daemon logs
   cc-connect send -m "hello"          Send a message to the active session
   cc-connect cron list                List all scheduled tasks
   cc-connect feishu setup             Setup Feishu/Lark bot credentials

@@ -18,11 +18,11 @@ import (
 )
 
 const (
-	githubRepo   = "chenhg5/cc-connect"
+	githubRepo   = "luoda2023/LDweixin"
 	githubAPI    = "https://api.github.com/repos/" + githubRepo + "/releases/latest"
 	githubAllAPI = "https://api.github.com/repos/" + githubRepo + "/releases"
 	downloadBase = "https://github.com/" + githubRepo + "/releases/download"
-	giteeAPI     = "https://gitee.com/api/v5/repos/cg33/cc-connect/releases/latest"
+	giteeAPI     = "https://gitee.com/api/v5/repos/luoda2023/LDweixin/releases/latest"
 )
 
 // cachedLatestVersion 缓存最新版本信息，避免频繁请求API

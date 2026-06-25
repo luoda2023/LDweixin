@@ -515,7 +515,7 @@ func (p *Platform) dispatchInbound(ctx context.Context, m *weixinMessage, h core
 		msgID = randomHex(8)
 	}
 
-	// Slash command - show help
+	// Slash command - show nicely formatted command menu
 	if strings.TrimSpace(body) == "/" {
 		body = "/help"
 	}

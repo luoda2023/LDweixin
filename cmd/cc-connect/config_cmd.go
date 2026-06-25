@@ -22,7 +22,7 @@ func runConfig(args []string) {
 	case "path":
 		fmt.Println(resolveConfigPath(""))
 	default:
-		fmt.Fprintf(os.Stderr, "Unknown config subcommand: %s\n", args[0])
+		fmt.Fprintf(os.Stderr, "UnknowLDweixin config subcommand: %s\n", args[0])
 		printConfigUsage()
 		os.Exit(1)
 	}

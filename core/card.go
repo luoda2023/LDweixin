@@ -254,9 +254,7 @@ func (c *Card) RenderText() string {
 			sb.WriteString("\n\n")
 		case CardListItem:
 			sb.WriteString(e.Text)
-			sb.WriteString("  [")
-			sb.WriteString(e.BtnText)
-			sb.WriteString("]\n")
+			sb.WriteString("\n")
 		case CardSelect:
 			sb.WriteString(e.Placeholder)
 			sb.WriteString(": ")

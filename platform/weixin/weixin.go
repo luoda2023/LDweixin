@@ -732,6 +732,7 @@ func (p *Platform) sendChunks(ctx context.Context, replyCtx any, content string)
 
 // stripMarkdown removes markdown formatting for clean WeChat display
 func stripMarkdown(s string) string {
+
 	s = strings.ReplaceAll(s, "**", "")
 	s = strings.ReplaceAll(s, "*", "")
 	s = strings.ReplaceAll(s, "`", "")
@@ -739,20 +740,37 @@ func stripMarkdown(s string) string {
 	s = strings.ReplaceAll(s, "\u25b6", "")
 	s = strings.ReplaceAll(s, "\u25b8", "")
 	s = strings.ReplaceAll(s, "\u25a0", "")
+	s = strings.ReplaceAll(s, "---", "")
+
 	lines := strings.Split(s, "\n")
 	var clean []string
 	for _, line := range lines {
 		trimmed := strings.TrimSpace(line)
-		if trimmed == "" { continue }
-		if trimmed == "---" { continue }
-		if strings.HasPrefix(trimmed, "### ") { trimmed = strings.TrimLeft(trimmed, "# ") }
-		if strings.HasPrefix(trimmed, "## ") { trimmed = strings.TrimLeft(trimmed, "# ") }
-		if strings.HasPrefix(trimmed, "# ") { trimmed = strings.TrimLeft(trimmed, "# ") }
+		if trimmed == "" {
+			continue
+		}
+		trimmed = strings.TrimLeft(trimmed, "#")
+		trimmed = strings.TrimSpace(trimmed)
+
+		if strings.HasSuffix(trimmed, "]") {
+			if lb := strings.LastIndex(trimmed, "["); lb >= 0 {
+				prefix := strings.TrimSpace(trimmed[:lb])
+				if prefix != "" {
+					trimmed = prefix
+				}
+			}
+		}
+
+		if dot := strings.Index(trimmed, "\u00b7"); dot > 0 && dot < len(trimmed)-2 {
+			trimmed = strings.TrimSpace(trimmed[:dot])
+		}
+
 		clean = append(clean, trimmed)
 	}
 	s = strings.Join(clean, "\n")
 	return strings.TrimSpace(s)
 }
+
 func (p *Platform) sendChunkWithRetry(ctx context.Context, rc *replyContext, chunk string, chunkIdx, totalChunks int) error {
 	var lastErr error
 	for attempt := 0; attempt < weixinSendMaxRetries; attempt++ {

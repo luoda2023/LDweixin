@@ -6624,15 +6624,12 @@ func (e *Engine) cmdList(p Platform, msg *Message, args []string) {
 		if showCount > 3 {
 			showCount = 3
 		}
-		sb.WriteString(fmt.Sprintf("📋 当前会话（共 %d 个）
-
-", total))
+		sb.WriteString(fmt.Sprintf("📋 当前会话（共 %d 个）\n\n", total))
 		for i := start; i < start+showCount; i++ {
 			s := agentSessions[i]
 			displayName := sessions.GetSessionName(s.ID)
 			if displayName == "" {
-				displayName = strings.ReplaceAll(s.Summary, "
-", " ")
+				displayName = strings.ReplaceAll(s.Summary, "\n", " ")
 				displayName = strings.Join(strings.Fields(displayName), " ")
 				if displayName == "" {
 					displayName = "(empty)"
@@ -6645,16 +6642,12 @@ func (e *Engine) cmdList(p Platform, msg *Message, args []string) {
 			if s.ID == activeAgentID {
 				marker = "▶ "
 			}
-			sb.WriteString(fmt.Sprintf("%s%d. %s | msgs: %d | %s
-", marker, i+1, displayName, s.MessageCount, s.ModifiedAt.Format("01-02 15:04")))
+			sb.WriteString(fmt.Sprintf("%s%d. %s | msgs: %d | %s\n", marker, i+1, displayName, s.MessageCount, s.ModifiedAt.Format("01-02 15:04")))
 		}
 		if showCount < total {
-			sb.WriteString(fmt.Sprintf("
-… 还有 %d 个会话
-", total-showCount))
+			sb.WriteString(fmt.Sprintf("\n… 还有 %d 个会话\n", total-showCount))
 		}
-		sb.WriteString("
-回复 /switch <编号> 切换会话")
+		sb.WriteString("\n回复 /switch <编号> 切换会话")
 		e.reply(p, msg.ReplyCtx, sb.String())
 		return
 	}

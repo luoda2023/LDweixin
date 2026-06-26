@@ -1361,7 +1361,7 @@ LangChinese: "📖 常用命令\n\n" +
 	},
 	MsgListTitle: {
 		LangEnglish:            "%s Sessions (%d)\n\n",
-		LangChinese:            "%s 会话列表 (%d)\n\n",
+		LangChinese:            "LDweixin 对话 (%d)\n",
 		LangTraditionalChinese: "%s 會話列表 (%d)\n\n",
 		LangJapanese:           "%s セッション (%d)\n\n",
 		LangSpanish:            "Sesiones de %s (%d)\n\n",

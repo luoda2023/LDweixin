@@ -6616,39 +6616,35 @@ func (e *Engine) cmdList(p Platform, msg *Message, args []string) {
 		activeSession := sessions.GetOrCreateActive(msg.SessionKey)
 		activeAgentID := activeSession.GetAgentSessionID()
 
-		var sb strings.Builder
-		if totalPages > 1 {
-			sb.WriteString(fmt.Sprintf(e.i18n.T(MsgListTitlePaged), agentName, total, page, totalPages))
-		} else {
-			sb.WriteString(fmt.Sprintf(e.i18n.T(MsgListTitle), agentName, total))
-		}
-		for i := start; i < end; i++ {
+				var sb strings.Builder
+		showCount := end - start
+		if showCount > 3 { showCount = 3 }
+		sb.WriteString(fmt.Sprintf(e.i18n.T(MsgListTitle), agentName, total))
+		for i := start; i < start+showCount; i++ {
 			s := agentSessions[i]
-			marker := "◻"
-			if s.ID == activeAgentID {
-				marker = "▶"
-			}
 			displayName := sessions.GetSessionName(s.ID)
-			if displayName != "" {
-				displayName = "📌 " + displayName
-			} else {
+			if displayName == "" {
 				displayName = strings.ReplaceAll(s.Summary, "\n", " ")
 				displayName = strings.Join(strings.Fields(displayName), " ")
 				if displayName == "" {
 					displayName = "(empty)"
 				}
 				if len([]rune(displayName)) > 40 {
-					displayName = string([]rune(displayName)[:40]) + "…"
+					displayName = string([]rune(displayName)[:40]) + "\u2026"
 				}
 			}
-			sb.WriteString(fmt.Sprintf("%s %d. %s · %d msgs · %s\n",
-				marker, i+1, displayName, s.MessageCount, s.ModifiedAt.Format("01-02 15:04")))
+			activeMark := ""
+			if s.ID == activeAgentID {
+				activeMark = " <- active"
+			}
+			sb.WriteString(fmt.Sprintf("%d. %s%s\n", i+1, displayName, activeMark))
 		}
-		if totalPages > 1 {
-			sb.WriteString(fmt.Sprintf(e.i18n.T(MsgListPageHint), page, totalPages))
+		if showCount < total {
+			sb.WriteString(fmt.Sprintf("... +%d more\n", total - showCount))
 		}
-		sb.WriteString(e.i18n.T(MsgListSwitchHint))
+		sb.WriteString("/switch # to change session")
 		e.reply(p, msg.ReplyCtx, sb.String())
+		return
 		return
 	}
 

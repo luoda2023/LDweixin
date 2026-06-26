@@ -6545,7 +6545,7 @@ func (e *Engine) cmdNew(p Platform, msg *Message, args []string) {
 // applySessionFilter conditionally filters agent sessions based on the
 // filter_external_sessions config. When disabled (default), all sessions are
 // returned. When enabled, only sessions tracked by cc-connect are shown.
-func (e *Engine) applySessionFilter(sessions []AgentSessionInfo, agent AgentType, sm *SessionManager) []AgentSessionInfo {
+func (e *Engine) applySessionFilter(sessions []AgentSessionInfo, agent string, sm *SessionManager) []AgentSessionInfo {
 	if !e.filterExternalSessions {
 		return sessions
 	}

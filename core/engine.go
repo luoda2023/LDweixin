@@ -6545,8 +6545,11 @@ func (e *Engine) cmdNew(p Platform, msg *Message, args []string) {
 // applySessionFilter conditionally filters agent sessions based on the
 // filter_external_sessions config. When disabled (default), all sessions are
 // returned. When enabled, only sessions tracked by cc-connect are shown.
-func (e *Engine) applySessionFilter(sessions []AgentSessionInfo, sm *SessionManager) []AgentSessionInfo {
+func (e *Engine) applySessionFilter(sessions []AgentSessionInfo, agent AgentType, sm *SessionManager) []AgentSessionInfo {
 	if !e.filterExternalSessions {
+		return sessions
+	}
+	if agent == "codex" {
 		return sessions
 	}
 	return filterOwnedSessions(sessions, sm.KnownAgentSessionIDs())
@@ -6587,7 +6590,7 @@ func (e *Engine) cmdList(p Platform, msg *Message, args []string) {
 			e.reply(p, msg.ReplyCtx, fmt.Sprintf(e.i18n.T(MsgListError), err))
 			return
 		}
-		agentSessions = e.applySessionFilter(agentSessions, sessions)
+		agentSessions = e.applySessionFilter(agentSessions, agent, sessions)
 		if len(agentSessions) == 0 {
 			e.reply(p, msg.ReplyCtx, e.i18n.T(MsgListEmpty))
 			return
@@ -6680,7 +6683,7 @@ func (e *Engine) cmdSwitch(p Platform, msg *Message, args []string) {
 		e.reply(p, msg.ReplyCtx, e.i18n.Tf(MsgError, err))
 		return
 	}
-	agentSessions = e.applySessionFilter(agentSessions, sessions)
+	agentSessions = e.applySessionFilter(agentSessions, agent, sessions)
 
 	matched := e.matchSession(agentSessions, sessions, query)
 	if matched == nil {
@@ -8020,7 +8023,7 @@ func (e *Engine) cmdSearch(p Platform, msg *Message, args []string) {
 		e.reply(p, msg.ReplyCtx, fmt.Sprintf(e.i18n.T(MsgSearchError), err))
 		return
 	}
-	agentSessions = e.applySessionFilter(agentSessions, sessions)
+	agentSessions = e.applySessionFilter(agentSessions, agent, sessions)
 
 	type searchResult struct {
 		id           string
@@ -8114,7 +8117,7 @@ func (e *Engine) cmdName(p Platform, msg *Message, args []string) {
 			e.reply(p, msg.ReplyCtx, e.i18n.Tf(MsgError, err))
 			return
 		}
-		agentSessions = e.applySessionFilter(agentSessions, sessions)
+		agentSessions = e.applySessionFilter(agentSessions, agent, sessions)
 		if idx > len(agentSessions) {
 			e.reply(p, msg.ReplyCtx, fmt.Sprintf(e.i18n.T(MsgSwitchNoSession), idx))
 			return
@@ -11905,7 +11908,7 @@ func (e *Engine) executeCardAction(cmd, args, sessionKey string) {
 		if err != nil || len(agentSessions) == 0 {
 			return
 		}
-		agentSessions = e.applySessionFilter(agentSessions, sessions)
+		agentSessions = e.applySessionFilter(agentSessions, agent, sessions)
 		matched := e.matchSession(agentSessions, sessions, args)
 		if matched == nil {
 			return
@@ -12078,7 +12081,7 @@ func (e *Engine) renderDeleteModeCard(sessionKey string) *Card {
 	if err != nil {
 		return e.simpleCard(e.i18n.T(MsgDeleteModeTitle), "red", err.Error())
 	}
-	agentSessions = e.applySessionFilter(agentSessions, sessions)
+	agentSessions = e.applySessionFilter(agentSessions, agent, sessions)
 	dm := e.getDeleteModeState(sessionKey)
 	if dm == nil {
 		return e.simpleCard(e.i18n.T(MsgDeleteModeTitle), "red", e.i18n.T(MsgDeleteUsage))
@@ -12447,7 +12450,7 @@ func (e *Engine) submitDeleteModeSelection(sessionKey string, selectedIDs map[st
 	if err != nil {
 		return []string{e.i18n.Tf(MsgError, err)}
 	}
-	agentSessions = e.applySessionFilter(agentSessions, sessions)
+	agentSessions = e.applySessionFilter(agentSessions, agent, sessions)
 	seen := make(map[string]struct{}, len(agentSessions))
 	lines := make([]string, 0, len(selectedIDs))
 	for i := range agentSessions {
@@ -12659,7 +12662,7 @@ func (e *Engine) renderListCard(sessionKey string, page int) (*Card, error) {
 	if err != nil {
 		return nil, fmt.Errorf(e.i18n.T(MsgListError), err)
 	}
-	agentSessions = e.applySessionFilter(agentSessions, sessions)
+	agentSessions = e.applySessionFilter(agentSessions, agent, sessions)
 	if len(agentSessions) == 0 {
 		return e.simpleCard(e.i18n.Tf(MsgCardTitleSessions, agent.Name(), 0), "turquoise", e.i18n.T(MsgListEmpty)), nil
 	}
@@ -15004,7 +15007,7 @@ func (e *Engine) cmdDelete(p Platform, msg *Message, args []string) {
 		e.reply(p, msg.ReplyCtx, e.i18n.Tf(MsgError, err))
 		return
 	}
-	agentSessions = e.applySessionFilter(agentSessions, sessions)
+	agentSessions = e.applySessionFilter(agentSessions, agent, sessions)
 
 	prefix := strings.TrimSpace(args[0])
 	if isExplicitDeleteBatchArg(prefix) {

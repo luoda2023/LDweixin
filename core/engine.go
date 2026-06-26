@@ -6615,7 +6615,6 @@ func (e *Engine) cmdList(p Platform, msg *Message, args []string) {
 			end = total
 		}
 
-		agentName := agent.Name()
 		activeSession := sessions.GetOrCreateActive(msg.SessionKey)
 		activeAgentID := activeSession.GetAgentSessionID()
 

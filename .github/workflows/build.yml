@@ -21,10 +21,11 @@ jobs:
 
       - name: Build
         run: |
-          echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_ENV
-          echo "COMMIT=$(git rev-parse --short HEAD 2>/dev/null || echo none)" >> $GITHUB_ENV
-          echo "BUILD_TIME=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_ENV
-          go build -tags "no_web" -ldflags "-s -w -X main.version=$VERSION -X main.commit=$COMMIT -X main.buildTime=$BUILD_TIME" -o LDweixin.exe ./cmd/cc-connect/
+          $version = "$env:GITHUB_REF_NAME".TrimStart("v")
+          $commit = git rev-parse --short HEAD 2>$null
+          if (-not $commit) { $commit = "none" }
+          $buildTime = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
+          go build -tags "no_web" -ldflags "-s -w -X main.version=$version -X main.commit=$commit -X main.buildTime=$buildTime" -o LDweixin.exe ./cmd/cc-connect/
 
       - name: Upload EXE as artifact
         uses: actions/upload-artifact@v4

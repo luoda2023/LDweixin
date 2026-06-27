@@ -146,7 +146,7 @@ func New(opts map[string]any) (core.Platform, error) {
 		stateDir = strings.TrimSpace(override)
 	}
 
-	httpClient := &http.Client{Timeout: defaultAPITimeout}
+	httpClient := &http.Client{Timeout: defaultAPITimeout, Transport: &http.Transport{Proxy: nil}}
 	if proxyURL, _ := opts["proxy"].(string); proxyURL != "" {
 		u, err := url.Parse(proxyURL)
 		if err != nil {

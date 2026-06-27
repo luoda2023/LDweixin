@@ -64,8 +64,6 @@ func (c *apiClient) longPollClient(timeout time.Duration) *http.Client {
 		Transport: transport,
 	}
 }
-		Transport: transport,
-	}
 
 func randomWechatUIN() string {
 	var b [4]byte
